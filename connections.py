@@ -3,8 +3,10 @@ import os
 
 import pygame
 
-pygame.mixer.pre_init(44100, -16, 2, 4096)
 pygame.init()
+pygame.mixer.pre_init(44100, -16, 2, 4096)
+pygame.mixer.music.load("taconnector1.wav")
+pygame.mixer.music.play(-1)  # Loop indefinitely
 width, height = 1280, 720
 screen = pygame.display.set_mode((width, height))
 fps = 60
@@ -36,13 +38,19 @@ async def main():
         filename = pygame.image.load(os.path.join(f"{filename}.png")).convert_alpha()
         return filename
 
+    tomato = [load("tomato")]
+    lemon = [load("lemon")]
+    chili_flakes = [load("chili_flakes")]
+    dill_pickle = [load("dill_pickle")]
+    radicchio = [load("radicchio")]
+
     while running:
         for event in pygame.event.get():
-            if event.type == QUIT:
+            if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    mouse_pos = event_pos
+                    mouse_pos = pygame.mouse.get_pos()
                     """this is the left click handler, mouse pos is now a (x,y) tuple"""
                     if holding_item:
                         if (
