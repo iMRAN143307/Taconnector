@@ -19,11 +19,20 @@ async def main():
         return filename
 
     tomato = [load("tomato")]
-    lemon = [load("lemon")]
-    chili_flakes = [load("chili_flakes")]
     dill_pickle = [load("dill_pickle")]
     radicchio = [load("radicchio")]
+    corned_beef = [load("corned_beef")]
+    pickled_jalapenos = [None]
+    lemon = [load("lemon")]
+    chili_flakes = [load("chili_flakes")]
+    guacamole = [load("guacamole")]
+    soy_sauce = [None]
+    honey = [None]
     arrabbiata_sauce = [load("arrabbiata_sauce"), tomato, chili_flakes]
+    carne_deshebrada = [load("carne_deshebrada"), corned_beef, lemon]
+    cowboy_candy = [None, pickled_jalapenos, honey]
+    radicchio_cream = [None, radicchio, guacamole]
+    shoyuzuke = [None, dill_pickle, soy_sauce]
     taco = load("taco")
     food_positions = [
         (140, 36),
@@ -33,9 +42,9 @@ async def main():
         (940, 36),
     ]  # food size + space in between should be 200 pixels
     all_foods = [
-        [tomato, dill_pickle, radicchio, None, None],
-        [chili_flakes, lemon, None, None, None],
-        [arrabbiata_sauce, None, None, None, None],
+        [tomato, dill_pickle, radicchio, corned_beef, pickled_jalapenos],
+        [chili_flakes, lemon, guacamole, soy_sauce, honey],
+        [arrabbiata_sauce, carne_deshebrada, cowboy_candy, radicchio_cream, shoyuzuke],
     ]
     main_cooking_area = [(440, 300), (840, 700)]
     food_in_cooking_area = []
