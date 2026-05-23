@@ -3,10 +3,11 @@ import os
 
 import pygame
 
-pygame.init()
 pygame.mixer.pre_init(44100, -16, 2, 4096)
+pygame.init()
 pygame.mixer.music.load("taconnector1.wav")
-pygame.mixer.music.play(-1)  # Loop indefinitely
+pygame.mixer.music.play()  # Loop indefinitely
+pygame.mixer.music.queue("taconnector2.wav")
 width, height = 1280, 720
 screen = pygame.display.set_mode((width, height))
 fps = 60
@@ -18,21 +19,41 @@ async def main():
         filename = pygame.image.load(os.path.join(f"{filename}.png")).convert_alpha()
         return filename
 
-    tomato = [load("tomato")]
-    dill_pickle = [load("dill_pickle")]
-    radicchio = [load("radicchio")]
-    corned_beef = [load("corned_beef")]
-    pickled_jalapenos = [None]
-    lemon = [load("lemon")]
-    chili_flakes = [load("chili_flakes")]
-    guacamole = [load("guacamole")]
-    soy_sauce = [None]
-    honey = [None]
-    arrabbiata_sauce = [load("arrabbiata_sauce"), tomato, chili_flakes]
-    carne_deshebrada = [load("carne_deshebrada"), corned_beef, lemon]
-    cowboy_candy = [None, pickled_jalapenos, honey]
-    radicchio_cream = [None, radicchio, guacamole]
-    shoyuzuke = [None, dill_pickle, soy_sauce]
+    tomato = [load("tomato"), 50, 30, 5, 5, 60, 0]
+    dill_pickle = [load("dill_pickle"), 5, 80, 5, 70, 20, 0]
+    radicchio = [load("radicchio"), 5, 10, 90, 5, 15, 1]
+    corned_beef = [load("corned_beef"), 5, 5, 5, 85, 90, 0]
+    pickled_jalapenos = [None, 10, 75, 10, 55, 20, 2]
+    lemon = [load("lemon"), 10, 90, 25, 0, 0, 0]
+    chili_flakes = [load("chili_flakes"), 0, 5, 15, 5, 15, 3]
+    guacamole = [load("guacamole"), 10, 30, 5, 25, 55, 0]
+    soy_sauce = [None, 5, 15, 10, 90, 65, 0]
+    honey = [None, 90, 5, 0, 0, 5, 0]
+    arrabbiata_sauce = [
+        load("arrabbiata_sauce"),
+        60,
+        40,
+        10,
+        30,
+        65,
+        2,
+        tomato,
+        chili_flakes,
+    ]
+    carne_deshebrada = [
+        load("carne_deshebrada"),
+        13,
+        70,
+        10,
+        65,
+        85,
+        0,
+        corned_beef,
+        lemon,
+    ]
+    cowboy_candy = [None, 80, 60, 15, 50, 30, 2, pickled_jalapenos, honey]
+    radicchio_cream = [None, 15, 15, 70, 35, 55, 1, radicchio, guacamole]
+    shoyuzuke = [None, 25, 65, 10, 80, 80, 0, dill_pickle, soy_sauce]
     taco = load("taco")
     food_positions = [
         (140, 36),
