@@ -4,15 +4,6 @@ import random
 
 import pygame
 
-pygame.mixer.pre_init(44100, -16, 2, 4096)
-pygame.init()
-song0 = "taconnector1.ogg"
-song1 = "taconnector2.ogg"
-song2 = "taconnector3.ogg"
-
-playlist = [song0, song1, song2]
-pygame.mixer.music.load(song0)
-pygame.mixer.music.play()
 SONG_END = pygame.USEREVENT + 1
 DRAG_MOUSE = pygame.USEREVENT + 2
 CUSTOMER_LOSE = pygame.USEREVENT + 3
@@ -20,9 +11,6 @@ CUSTOMER_WIN = pygame.USEREVENT + 4
 CHECK = pygame.USEREVENT + 5
 SUBMIT = pygame.USEREVENT + 6
 CLEAR = pygame.USEREVENT + 7
-pygame.mixer.music.set_endevent(SONG_END)
-width, height = 1280, 720
-screen = pygame.display.set_mode((width, height))
 fpsClock = pygame.time.Clock()
 
 
@@ -35,7 +23,16 @@ async def main():
         unscaled = pygame.image.load(os.path.join(f"{filename}.png")).convert()
         return pygame.transform.scale(unscaled, (1280, 720))
 
-    font = pygame.font.SysFont(None, 48)
+    pygame.init()
+    width, height = 1280, 720
+    screen = pygame.display.set_mode((width, height))
+    song0 = "taconnector1.ogg"
+    song1 = "taconnector2.ogg"
+    song2 = "taconnector3.ogg"
+    playlist = [song0, song1, song2]
+    pygame.mixer.music.set_endevent(SONG_END)
+    pygame.mixer.music.load(song0)
+    font = pygame.font.Font("Lato.ttf", 38)
     clear = 0
     to_say = []
     current_index = 0
@@ -227,6 +224,7 @@ async def main():
     shredded_beef_unlocked = False
     cowboy_candy_unlocked = False
     radicchio_cream_unlocked = False
+    first_click = True
 
     while running:
         mouse_pos = pygame.mouse.get_pos()
@@ -315,33 +313,41 @@ async def main():
                     ]
                     intermission = True
             if event.type == pygame.MOUSEBUTTONUP:
-                if (mouse_pos[0] - 610) ** 2 + (mouse_pos[1] - 480) ** 2 <= 210**2:
+                clickx, clicky = event.pos
+                if (clickx - 610) ** 2 + (clicky - 480) ** 2 <= 210**2:
                     mouse_released = True
                     holding_item = None
             if event.type == pygame.MOUSEBUTTONDOWN:
+                clickx, clicky = event.pos
                 if event.button == 1:
-                    if mouse_pos[1] >= 310 and mouse_pos[1] <= 410 and not intermission:
+                    if first_click:
+                        try:
+                            first_click = False
+                            pygame.mixer.music.play()
+                        except Exception:
+                            pass
+                    if clicky >= 310 and clicky <= 410 and not intermission:
                         if mouse_pos[0] >= 64 and mouse_pos[0] <= 264:
                             if can_check != 0:
                                 pygame.event.post(pygame.event.Event(CHECK))
-                        if mouse_pos[0] >= 1016 and mouse_pos[0] <= 1216:
+                        if clickx >= 1016 and clickx <= 1216:
                             pygame.event.post(pygame.event.Event(SUBMIT))
-                    if (mouse_pos[0] - 610) ** 2 + (mouse_pos[1] - 480) ** 2 <= 210**2:
+                    if (clickx - 610) ** 2 + (clicky - 480) ** 2 <= 210**2:
                         if holding_item is not None:
                             food_in_cooking_area.append((holding_item, mouse_pos))
                         mouse_released = False
                         pygame.time.set_timer(DRAG_MOUSE, 25)
-                    if mouse_pos[1] < 237 and mouse_pos[1] > 35:
+                    if clicky < 237 and clicky > 35:
                         for i, box in enumerate(food_positions):
-                            if mouse_pos[0] < box[0] + 201 and mouse_pos[0] >= box[0]:
+                            if clickx < box[0] + 201 and clickx >= box[0]:
                                 if foods_shown[i] != locked:
                                     holding_item = foods_shown[i]
-                    if mouse_pos[1] < 203 and mouse_pos[1] > 61:
-                        if mouse_pos[0] >= 0 and mouse_pos[0] < 141:
+                    if clicky < 203 and clicky > 61:
+                        if clickx >= 0 and clickx < 141:
                             cycle_food -= 1
                             cycle_food = cycle_food % 3
                             foods_shown = all_foods[cycle_food]
-                        elif mouse_pos[0] > 1141 and mouse_pos[0] <= 1280:
+                        elif clickx > 1141 and clickx <= 1280:
                             cycle_food += 1
                             cycle_food = cycle_food % 3
                             foods_shown = all_foods[cycle_food]
@@ -493,14 +499,14 @@ async def main():
                 screen.blit(check_buttonused, (64, 310))
             screen.blit(submit_button, (1016, 310))
             screen.blit(
-                font.render("The customer wants", True, (255, 255, 255)), (850, 580)
+                font.render("The customer wants", True, (255, 255, 255)), (850, 590)
             )
             screen.blit(
                 font.render("a taco that is", True, (255, 255, 255)),
                 (920, 630),
             )
             screen.blit(
-                font.render(current_customer[0], True, (255, 255, 255)), (790, 680)
+                font.render(current_customer[0], True, (255, 255, 255)), (775, 670)
             )
         for i, text in enumerate(to_say):
             screen.blit(font.render(text, True, (255, 255, 255)), (64, (410 + 50 * i)))
