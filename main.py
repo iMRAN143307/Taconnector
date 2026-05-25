@@ -1,6 +1,7 @@
 import asyncio
 import os
 import random
+import sys
 
 import pygame
 
@@ -14,13 +15,21 @@ CLEAR = pygame.USEREVENT + 7
 fpsClock = pygame.time.Clock()
 
 
+def resource_path(relative_path):
+    try:
+        base_path = sys.MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+
 async def main():
     def load(filename):
-        filename = pygame.image.load(os.path.join(f"{filename}.png")).convert_alpha()
-        return filename
+        image_path = resource_path(f"{filename}.png")
+        return pygame.image.load(image_path).convert_alpha()
 
     def load_and_scale(filename):
-        unscaled = pygame.image.load(os.path.join(f"{filename}.png")).convert()
+        unscaled = pygame.image.load(resource_path(f"{filename}.png")).convert()
         return pygame.transform.scale(unscaled, (1280, 720))
 
     pygame.init()
