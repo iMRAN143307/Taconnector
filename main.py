@@ -6,10 +6,11 @@ import pygame
 
 pygame.mixer.pre_init(44100, -16, 2, 4096)
 pygame.init()
-song0 = "taconnector1.wav"
-song1 = "taconnector2.wav"
+song0 = "taconnector1.ogg"
+song1 = "taconnector2.ogg"
+song2 = "taconnector3.ogg"
 
-playlist = [song0, song1]
+playlist = [song0, song1, song2]
 pygame.mixer.music.load(song0)
 pygame.mixer.music.play()
 SONG_END = pygame.USEREVENT + 1
@@ -18,6 +19,7 @@ CUSTOMER_LOSE = pygame.USEREVENT + 3
 CUSTOMER_WIN = pygame.USEREVENT + 4
 CHECK = pygame.USEREVENT + 5
 SUBMIT = pygame.USEREVENT + 6
+CLEAR = pygame.USEREVENT + 7
 pygame.mixer.music.set_endevent(SONG_END)
 width, height = 1280, 720
 screen = pygame.display.set_mode((width, height))
@@ -34,6 +36,7 @@ async def main():
         return pygame.transform.scale(unscaled, (1280, 720))
 
     font = pygame.font.SysFont(None, 48)
+    clear = 0
     to_say = []
     current_index = 0
     background = load_and_scale("background")
@@ -41,6 +44,7 @@ async def main():
     arrow_right = load("arrow_right")
     submit_button = load("submit_button")
     check_button = load("check_button")
+    check_buttonused = load("check_buttonused")
     locked = load("locked")
     tomato = [load("tomato"), load("tomatoicon"), 50, 30, 5, 5, 60, 0, "tomato"]
     dill_pickle = [
@@ -277,7 +281,8 @@ async def main():
                     combining_food = []
                     radicchio_cream_unlocked = True
                 intermission = False
-                food_in_cooking_area = []
+                pygame.event.post(pygame.event.Event(CLEAR))
+                clear = 10
                 combining_food = []
                 current_customer = all_customers[random.randint(0, 4)]
                 to_say = []
@@ -286,12 +291,14 @@ async def main():
                 running = False
             if event.type == CUSTOMER_LOSE:
                 can_check = 3
-                food_in_cooking_area = []
+                pygame.event.post(pygame.event.Event(CLEAR))
+                clear = 10
                 current_customer = all_customers[random.randint(0, 4)]
                 to_say = []
             if event.type == CUSTOMER_WIN:
                 can_check = 3
-                food_in_cooking_area = []
+                pygame.event.post(pygame.event.Event(CLEAR))
+                clear = 10
                 current_customer = all_customers[random.randint(0, 4)]
                 if (
                     not arrabbiata_sauce_unlocked
@@ -349,7 +356,7 @@ async def main():
                             food_in_cooking_area.append((holding_item, mouse_pos))
                         pygame.time.set_timer(DRAG_MOUSE, 25)
             if event.type == SUBMIT:
-                tolerance = 10
+                tolerance = 1
                 sweet = [0, 0]
                 sour = [0, 0]
                 bitter = [0, 0]
@@ -377,25 +384,25 @@ async def main():
                 savoury = savoury[0] // max(savoury[1], 1)
                 spicy = round(spicy[0] / max(spicy[1], 1))
                 flavour_profile = [sweet, sour, bitter, salty, savoury, spicy]
-                if flavour_profile[0] > current_customer[1] + 10:
+                if flavour_profile[0] > current_customer[1] + 17:
                     tolerance -= 1
-                elif flavour_profile[0] < current_customer[1] - 10:
+                elif flavour_profile[0] < current_customer[1] - 17:
                     tolerance -= 1
-                if flavour_profile[1] > current_customer[2] + 10:
+                if flavour_profile[1] > current_customer[2] + 17:
                     tolerance -= 1
-                elif flavour_profile[1] < current_customer[2] - 10:
+                elif flavour_profile[1] < current_customer[2] - 17:
                     tolerance -= 1
-                if flavour_profile[2] > current_customer[3] + 10:
+                if flavour_profile[2] > current_customer[3] + 17:
                     tolerance -= 1
-                elif flavour_profile[2] < current_customer[3] - 10:
+                elif flavour_profile[2] < current_customer[3] - 17:
                     tolerance -= 1
-                if flavour_profile[3] > current_customer[4] + 10:
+                if flavour_profile[3] > current_customer[4] + 17:
                     tolerance -= 1
-                elif flavour_profile[3] < current_customer[4] - 10:
+                elif flavour_profile[3] < current_customer[4] - 17:
                     tolerance -= 1
-                if flavour_profile[4] > current_customer[5] + 10:
+                if flavour_profile[4] > current_customer[5] + 17:
                     tolerance -= 1
-                elif flavour_profile[4] < current_customer[5] - 10:
+                elif flavour_profile[4] < current_customer[5] - 17:
                     tolerance -= 1
                 if flavour_profile[5] > current_customer[6] + 1:
                     tolerance -= 1
@@ -434,31 +441,36 @@ async def main():
                 spicy = round(spicy[0] / max(spicy[1], 1))
                 flavour_profile = [sweet, sour, bitter, salty, savoury, spicy]
                 to_say = []
-                if flavour_profile[0] > current_customer[1] + 10:
+                if flavour_profile[0] > current_customer[1] + 17:
                     to_say.append("too sweet")
-                elif flavour_profile[0] < current_customer[1] - 10:
+                elif flavour_profile[0] < current_customer[1] - 17:
                     to_say.append("not sweet enough")
-                if flavour_profile[1] > current_customer[2] + 10:
+                if flavour_profile[1] > current_customer[2] + 17:
                     to_say.append("too sour")
-                elif flavour_profile[1] < current_customer[2] - 10:
+                elif flavour_profile[1] < current_customer[2] - 17:
                     to_say.append("not sour enough")
-                if flavour_profile[2] > current_customer[3] + 10:
+                if flavour_profile[2] > current_customer[3] + 17:
                     to_say.append("too bitter")
-                elif flavour_profile[2] < current_customer[3] - 10:
+                elif flavour_profile[2] < current_customer[3] - 17:
                     to_say.append("not bitter enough")
-                if flavour_profile[3] > current_customer[4] + 10:
+                if flavour_profile[3] > current_customer[4] + 17:
                     to_say.append("too salty")
-                elif flavour_profile[3] < current_customer[4] - 10:
+                elif flavour_profile[3] < current_customer[4] - 17:
                     to_say.append("not salty enough")
-                if flavour_profile[4] > current_customer[5] + 10:
+                if flavour_profile[4] > current_customer[5] + 17:
                     to_say.append("too savoury")
-                elif flavour_profile[4] < current_customer[5] - 10:
+                elif flavour_profile[4] < current_customer[5] - 17:
                     to_say.append("not savoury enough")
                 if flavour_profile[5] > current_customer[6] + 1:
                     to_say.append("too spicy")
                 elif flavour_profile[5] < current_customer[6] - 1:
                     to_say.append("not spicy enough")
                 can_check -= 1
+            if event.type == CLEAR:
+                food_in_cooking_area = []
+                clear -= 1
+                if clear != 0:
+                    pygame.event.post(pygame.event.Event(CLEAR))
         screen.blit(background, (0, 0))
         screen.blit(taco, main_cooking_area[0])
         screen.blit(arrow_left, (0, 62))
@@ -475,8 +487,18 @@ async def main():
         if holding_item:
             screen.blit(holding_item[1], mouse_pos)
         if not intermission:
-            screen.blit(check_button, (64, 310))
+            if can_check != 0:
+                screen.blit(check_button, (64, 310))
+            else:
+                screen.blit(check_buttonused, (64, 310))
             screen.blit(submit_button, (1016, 310))
+            screen.blit(
+                font.render("The customer wants", True, (255, 255, 255)), (850, 580)
+            )
+            screen.blit(
+                font.render("a taco that is", True, (255, 255, 255)),
+                (920, 630),
+            )
             screen.blit(
                 font.render(current_customer[0], True, (255, 255, 255)), (790, 680)
             )
